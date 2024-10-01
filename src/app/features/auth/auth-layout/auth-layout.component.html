@@ -1,0 +1,40 @@
+<!-- signin.component.html -->
+<div class="w-full h-full px-28 flex flex-col justify-between items-center py-16 absolute inset-0">
+
+
+  <!-- Form Container -->
+  <div class="w-full flex flex-col justify-center items-start gap-6 mt-8">
+    <!-- Welcome Message -->
+    <div class="flex flex-col mb-2">
+      <h4 class="text-2xl font-semibold">Welcome back!</h4>
+      <small class="text-gray-400">Please enter your details</small>
+    </div>
+
+    <!-- Email Input -->
+    <div class="flex flex-col gap-1 text-base w-full">
+      <label for="email" class="pl-1 font-semibold text-sm">Email</label>
+      <input type="email" class="bg-tertiary-tw border-2 px-4 border-black rounded-2xl p-2 w-full" id="email" [(ngModel)]="email">
+    </div>
+
+    <!-- Password Input -->
+    <div class="flex flex-col gap-1 text-base w-full">
+      <label for="password" class="pl-1 font-semibold text-sm">Password</label>
+      <input type="password" class="bg-tertiary-tw border-2 px-4 border-black rounded-2xl p-2 w-full" id="password" [(ngModel)]="password">
+    </div>
+
+    <!-- Remember Me Checkbox -->
+    <div class="flex items-center gap-2 text-gray-500">
+      <input type="checkbox" id="remember-me" class="h-4 w-4">
+      <label for="remember-me" class="text-sm">Remember me</label>
+    </div>
+  </div>
+
+  <!-- Login Button -->
+  <button type="submit" (click)="login()" class="bg-secondary-tw py-2 px-8 rounded-lg text-primary-text-tw font-semibold mt-6">Login</button>
+
+  <!-- Buttons for Predefined Accounts -->
+  <div class="w-full flex flex-col justify-center items-center gap-4 mt-8">
+    <button (click)="loginWithPredefinedAccount('user')" class="bg-blue-500 py-2 px-8 rounded-lg text-white font-semibold">Login as Student</button>
+    <button (click)="loginWithPredefinedAccount('admin')" class="bg-red-500 py-2 px-8 rounded-lg text-white font-semibold">Login as Admin</button>
+  </div>
+</div>
