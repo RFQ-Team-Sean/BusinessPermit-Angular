@@ -20,8 +20,11 @@ interface User {
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class BusinessEnrollmentComponent {
-  itemsPerPageOptions: number[] = Array.from({ length: 10 }, (_, i) => i + 1);
+  currentPage: number = 1;
+  itemsPerPage: number = 5;
+  itemsPerPageOptions: number[] = [5, 10, 15, 20, 25];
   searchQuery: string = '';
+
   allUsers: User[] = [
     {
       name: 'Angelo John Calleja',
@@ -62,24 +65,103 @@ export class BusinessEnrollmentComponent {
       joinDate: 'May 20, 2023',
       status: 'approved',
       action: 'Approve'
+    },
+    {
+      name: 'Juancho',
+      address: '654 Birch St, San Francisco, CA',
+      phone: '415-555-7890',
+      joinDate: 'May 20, 2023',
+      status: 'approved',
+      action: 'Approve'
+    },
+    {
+      name: 'Pepito',
+      address: '654 Birch St, San Francisco, CA',
+      phone: '415-555-7890',
+      joinDate: 'May 20, 2023',
+      status: 'approved',
+      action: 'Approve'
+    },
+    {
+      name: 'Tommy',
+      address: '654 Birch St, San Francisco, CA',
+      phone: '415-555-7890',
+      joinDate: 'May 20, 2023',
+      status: 'approved',
+      action: 'Approve'
     }
   ];
 
-  get users(): User[] {
-    if (!this.searchQuery) {
-      return this.allUsers;
+   // Getter for paginated and filtered users
+   get users(): User[] {
+    let filteredUsers = this.allUsers;
+    
+    // Apply search filter if query exists
+    if (this.searchQuery) {
+      const query = this.searchQuery.toLowerCase();
+      filteredUsers = this.allUsers.filter(user => 
+        user.name.toLowerCase().includes(query) ||
+        user.address.toLowerCase().includes(query) ||
+        user.phone.toLowerCase().includes(query)
+      );
     }
 
-    const query = this.searchQuery.toLowerCase();
-    return this.allUsers.filter(user => 
-      user.name.toLowerCase().includes(query) ||
-      user.address.toLowerCase().includes(query) ||
-      user.phone.toLowerCase().includes(query)
-    );
+      // Calculate pagination
+      const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+      const endIndex = startIndex + this.itemsPerPage;
+      
+      return filteredUsers.slice(startIndex, endIndex);
+    }
+
+    // Get total number of filtered items
+  get totalItems(): number {
+    if (this.searchQuery) {
+      const query = this.searchQuery.toLowerCase();
+      return this.allUsers.filter(user => 
+        user.name.toLowerCase().includes(query) ||
+        user.address.toLowerCase().includes(query) ||
+        user.phone.toLowerCase().includes(query)
+      ).length;
+    }
+    return this.allUsers.length;
   }
 
+  // Get total number of pages
+  get totalPages(): number {
+    return Math.ceil(this.totalItems / this.itemsPerPage);
+  }
+
+  // Get display text for current range of items
+  get itemsRange(): string {
+    const start = (this.currentPage - 1) * this.itemsPerPage + 1;
+    const end = Math.min(this.currentPage * this.itemsPerPage, this.totalItems);
+    return `${start}-${end} of ${this.totalItems}`;
+  }
+
+  // Navigation methods
+  nextPage(): void {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+    }
+  }
+
+  previousPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+    }
+  }
+
+  // Handle items per page change
+  onItemsPerPageChange(event: Event): void {
+    const select = event.target as HTMLSelectElement;
+    this.itemsPerPage = Number(select.value);
+    this.currentPage = 1; // Reset to first page when changing items per page
+  }
+
+  // Search method
   onSearch(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.searchQuery = input.value;
+    this.currentPage = 1; // Reset to first page when searching
   }
 }
