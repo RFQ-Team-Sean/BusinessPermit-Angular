@@ -93,24 +93,33 @@
   <nav aria-label="Pagination" class="flex flex-col text-xs max-w-[500px] text-neutral-500">
     <div class="flex gap-8 items-start w-full">
       <label for="itemsPerPage" class="grow self-stretch">Items per page:</label>
-      <div class="flex gap-2.5 whitespace-nowrap ">
-        <select id="itemsPerPage" class="px-2 py-0.5 bg-neutral-100" aria-label="Select items per page">
+      <div class="flex gap-2.5 whitespace-nowrap">
+        <select 
+          id="itemsPerPage" 
+          [ngModel]="itemsPerPage"
+          (ngModelChange)="onItemsPerPageChange($event)"
+          class="px-2 py-0.5 bg-neutral-100" 
+          aria-label="Select items per page">
           <option *ngFor="let num of itemsPerPageOptions" [value]="num">{{ num }}</option>
         </select>
-        
       </div>
-      <!--<iconify-icon icon="iwwa:arrow-down"></iconify-icon>-->
       <div class="flex gap-10 items-center mt-1">
-        <p class="self-stretch">1-4 of 10</p>
-        <button aria-label="Previous page" class="focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <p class="self-stretch">{{ itemsRange }}</p>
+        <button 
+          aria-label="Previous page" 
+          [disabled]="currentPage === 1"
+          (click)="previousPage()"
+          class="focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50">
           <iconify-icon icon="akar-icons:arrow-left"></iconify-icon>
         </button>
-        <button aria-label="Next page" class="focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <button 
+          aria-label="Next page" 
+          [disabled]="currentPage === totalPages"
+          (click)="nextPage()"
+          class="focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50">
           <iconify-icon icon="akar-icons:arrow-right"></iconify-icon>
         </button>
       </div>
     </div>
   </nav>
 </div>
-
- 
