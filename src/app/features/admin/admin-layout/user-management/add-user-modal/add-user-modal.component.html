@@ -1,65 +1,164 @@
-<div *ngIf="showModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50" (click)="closeModal()">
-    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white" (click)="$event.stopPropagation()">
-      <div class="mt-3 text-center">
-        <h2 class="text-xl font-bold mb-4">{{ editingMode ? 'Edit User' : 'Add New User' }}</h2>
-        <form [formGroup]="userForm" (ngSubmit)="submitForm()">
-          <!-- Hidden ID Field -->
-          <input type="hidden" formControlName="id" />
-  
-          <!-- Name Field -->
-          <div class="form-group mb-4">
-            <label for="userName" class="block text-sm font-medium text-gray-700 text-left">Name:</label>
-            <input type="text" id="userName" formControlName="name" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" />
-            <div *ngIf="userForm.get('name')?.invalid && (userForm.get('name')?.dirty || userForm.get('name')?.touched)" class="text-red-500 text-sm mt-1 text-left">
-              Name is required.
+<!-- src/app/user-management/add-user-modal/add-user-modal.component.html -->
+
+<div *ngIf="showModalInternal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50" (click)="closeModal()">
+  <div class="bg-white rounded-lg shadow-lg w-full max-w-md" (click)="$event.stopPropagation()">
+   
+    <!-- Modal Header -->
+    <div class="flex justify-between items-center bg-gray-100 px-6 py-4 rounded-t-lg">
+      <h2 class="text-xl font-semibold text-gray-800">{{ editingMode ? 'Edit User' : 'Add New User' }}</h2>
+      <button (click)="closeModal()" class="text-gray-600 hover:text-gray-800">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="p-6">
+      <form [formGroup]="userForm" (ngSubmit)="submitForm()" class="space-y-4">
+        <input type="hidden" formControlName="id" />
+
+        <!-- Name Field -->
+        <div>
+          <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
+          <input type="text" id="name" formControlName="name" class="mt-1 block w-full border border-gray-300 rounded-md p-2 text-sm" placeholder="Enter full name">
+          <div *ngIf="userForm.get('name')?.invalid && (userForm.get('name')?.dirty || userForm.get('name')?.touched)" class="text-red-500 text-xs mt-1">
+            Name is required.
+          </div>
+        </div>
+
+        <!-- Email Field -->
+        <div>
+          <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+          <input type="email" id="email" formControlName="email" class="mt-1 block w-full border border-gray-300 rounded-md p-2 text-sm" placeholder="Enter email address">
+          <div *ngIf="userForm.get('email')?.invalid && (userForm.get('email')?.dirty || userForm.get('email')?.touched)" class="text-red-500 text-xs mt-1">
+            <span *ngIf="userForm.get('email')?.errors?.['required']">Email is required.</span>
+            <span *ngIf="userForm.get('email')?.errors?.['email']">Please enter a valid email address.</span>
+            <span *ngIf="userForm.get('email')?.errors?.['emailTaken']">This email is already taken.</span>
+          </div>
+        </div>
+
+        <!-- Phone Field -->
+        <div>
+          <label for="phone" class="block text-sm font-medium text-gray-700">Phone</label>
+          <input type="tel" id="phone" formControlName="phone" class="mt-1 block w-full border border-gray-300 rounded-md p-2 text-sm" placeholder="e.g., 0917-123-4567">
+          <div *ngIf="userForm.get('phone')?.invalid && (userForm.get('phone')?.dirty || userForm.get('phone')?.touched)" class="text-red-500 text-xs mt-1">
+            Please enter a valid Philippine mobile number.
+          </div>
+        </div>
+
+        <!-- Role Field -->
+        <div>
+          <label for="role" class="block text-sm font-medium text-gray-700">Role</label>
+          <select id="role" formControlName="role" class="mt-1 block w-full border border-gray-300 rounded-md p-2 text-sm">
+            <option value="User">User</option>
+            <option value="Admin">Admin</option>
+          </select>
+        </div>
+
+        <!-- Password Section -->
+        <div class="space-y-4 border-t border-gray-200 pt-4 mt-4">
+          <h3 class="text-lg font-medium text-gray-900">Password Management</h3>
+          
+          <!-- New User Password -->
+          <div *ngIf="!editingMode">
+            <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+            <div class="mt-1 relative">
+              <input [type]="showPassword ? 'text' : 'password'" id="password" formControlName="password" class="block w-full pr-10 border border-gray-300 rounded-md p-2 text-sm" placeholder="Enter password">
+              <button type="button" (click)="togglePasswordVisibility('password')" class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-gray-500">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </button>
+            </div>
+            <div *ngIf="userForm.get('password')?.invalid && (userForm.get('password')?.dirty || userForm.get('password')?.touched)" class="text-red-500 text-xs mt-1">
+              <span *ngIf="userForm.get('password')?.errors?.['required']">Password is required.</span>
+              <span *ngIf="userForm.get('password')?.errors?.['minlength']">Password must be at least 6 characters.</span>
             </div>
           </div>
-  
-          <!-- Email Field -->
-          <div class="form-group mb-4">
-            <label for="userEmail" class="block text-sm font-medium text-gray-700 text-left">Email:</label>
-            <input type="email" id="userEmail" formControlName="email" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" />
-            <div *ngIf="userForm.get('email')?.invalid && (userForm.get('email')?.dirty || userForm.get('email')?.touched)" class="text-red-500 text-sm mt-1 text-left">
-              <span *ngIf="userForm.get('email')?.errors?.['required'] || userForm.get('email')?.errors?.['email']">
-                Please enter a valid email address.
-              </span>
-              <span *ngIf="userForm.get('email')?.errors?.['emailTaken']">
-                This email is already taken.
-              </span>
+
+          <!-- Existing User Password Management -->
+          <div *ngIf="editingMode">
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-sm font-medium text-gray-700">Current Password</span>
+              <button 
+                type="button" 
+                (click)="toggleChangePassword()" 
+                class="px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm transition duration-150 ease-in-out"
+              >
+                {{ isChangingPassword ? 'Cancel' : 'Change Password' }}
+              </button>
+            </div>
+            <div class="mt-1 relative" *ngIf="!isChangingPassword">
+              <input
+                [type]="showPassword ? 'text' : 'password'"
+                [value]="user?.password"
+                class="block w-full pr-10 border border-gray-300 rounded-md p-2 bg-gray-100 text-sm"
+                readonly
+              >
+              <button
+                type="button"
+                (click)="togglePasswordVisibility('currentPassword')"
+                class="absolute inset-y-0 right-0 pr-3 flex items-center"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-gray-500">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </button>
             </div>
           </div>
-  
-          <!-- Phone Field -->
-          <div class="form-group mb-4">
-            <label for="userPhone" class="block text-sm font-medium text-gray-700 text-left">Phone (e.g., 0917-123-4567):</label>
-            <input type="tel" id="userPhone" formControlName="phone" placeholder="0917-123-4567" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" />
-            <div *ngIf="userForm.get('phone')?.invalid && (userForm.get('phone')?.dirty || userForm.get('phone')?.touched)" class="text-red-500 text-sm mt-1 text-left">
-              Please enter a valid Philippine mobile number.
+
+          <!-- New Password Fields -->
+          <ng-container *ngIf="editingMode && isChangingPassword">
+            <div>
+              <label for="newPassword" class="block text-sm font-medium text-gray-700">New Password</label>
+              <div class="mt-1 relative">
+                <input [type]="showNewPassword ? 'text' : 'password'" id="newPassword" formControlName="newPassword" class="block w-full pr-10 border border-gray-300 rounded-md p-2 text-sm" placeholder="Enter new password">
+                <button type="button" (click)="togglePasswordVisibility('newPassword')" class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-gray-500">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                </button>
+              </div>
+              <div *ngIf="userForm.get('newPassword')?.invalid && (userForm.get('newPassword')?.dirty || userForm.get('newPassword')?.touched)" class="text-red-500 text-xs mt-1">
+                <span *ngIf="userForm.get('newPassword')?.errors?.['required']">New password is required.</span>
+                <span *ngIf="userForm.get('newPassword')?.errors?.['minlength']">New password must be at least 6 characters.</span>
+              </div>
             </div>
-          </div>
-  
-          <!-- Role Field -->
-          <div class="form-group mb-4">
-            <label for="userRole" class="block text-sm font-medium text-gray-700 text-left">Role:</label>
-            <select id="userRole" formControlName="role" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
-              <option value="User">User</option>
-              <option value="Admin">Admin</option>
-            </select>
-          </div>
-  
-          <!-- Join Date Field (hidden, handled in component) -->
-          <input type="hidden" formControlName="joinDate" />
-  
-          <!-- Action Buttons -->
-          <div class="form-buttons flex justify-end gap-4 mt-6">
-            <button type="submit" [disabled]="userForm.invalid" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 disabled:opacity-50">
-              {{ editingMode ? 'Update' : 'Add' }} User
-            </button>
-            <button type="button" (click)="closeModal()" class="bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400">
-              Cancel
-            </button>
-          </div>
-        </form>
-      </div>
+
+            <div>
+              <label for="confirmPassword" class="block text-sm font-medium text-gray-700">Confirm New Password</label>
+              <div class="mt-1 relative">
+                <input [type]="showConfirmPassword ? 'text' : 'password'" id="confirmPassword" formControlName="confirmPassword" class="block w-full pr-10 border border-gray-300 rounded-md p-2 text-sm" placeholder="Confirm new password">
+                <button type="button" (click)="togglePasswordVisibility('confirmPassword')" class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-gray-500">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                </button>
+              </div>
+              <div *ngIf="userForm.hasError('passwordMismatch') && userForm.get('confirmPassword')?.touched" class="text-red-500 text-xs mt-1">
+                Passwords do not match.
+              </div>
+            </div>
+          </ng-container>
+        </div>
+
+        <input type="hidden" formControlName="joinDate" />
+
+        <!-- Action Buttons -->
+        <div class="flex justify-end gap-4 mt-6">
+          <button type="button" (click)="closeModal()" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 text-sm">
+            Cancel
+          </button>
+          <button type="submit" [disabled]="userForm.invalid" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed text-sm">
+            {{ editingMode ? 'Update' : 'Add' }} User
+          </button>
+        </div>
+      </form>
     </div>
   </div>
+</div>
