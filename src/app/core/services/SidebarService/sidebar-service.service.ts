@@ -5,6 +5,9 @@ import { BehaviorSubject, Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class SidebarServiceService {
+  getSidebar() {
+    throw new Error('Method not implemented.');
+  }
   private isCollapsedSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public isCollapsed$: Observable<boolean> = this.isCollapsedSubject.asObservable();
 

@@ -1,14 +1,13 @@
-
-
 import { Component, CUSTOM_ELEMENTS_SCHEMA, Output, EventEmitter, OnInit } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { SidebarServiceService} from '../../../core/services/SidebarService/sidebar-service.service';
+import { MenuService } from '../../../core/services/menu-service.service';
 
 interface MenuItem {
   label: string;
   icon?: string;
-  route: string;  // Make route required
+  route: string;
   svgIcon?: string;
 }
 @Component({
@@ -27,7 +26,7 @@ export class SideBarComponent implements OnInit {
   UserMenu: MenuItem[] = [
     {
       label: 'Dashboard',
-      icon: 'ic:sharp-dashboard',
+      icon: 'material-symbols:dashboard',
       route: '/user/dashboard',
     },
 
@@ -35,22 +34,59 @@ export class SideBarComponent implements OnInit {
 
   AdminMenu: MenuItem[] = [
     {
-      label: 'Dashboard',
-      icon: 'ic:sharp-dashboard',
-      route: '/admin/dashboard',
+        label: 'Dashboard',
+        icon: 'material-symbols:dashboard',
+        route: '/admin/a-dashboard',
     },
+    {
+        label: 'User Management',
+        icon: 'fa-solid:user-cog',
+        route: '/admin/user-management',
+    },
+    {
+        label: 'Business Enrollment', 
+        icon: 'fa-solid:business-time',
+        route: '/admin/business-enrollment',
+    },
+    {
+        label: 'Permit Application Processing',
+        icon: 'mdi:file-clock', 
+        route: '/admin/permit-application',
+    },
+    {
+        label: 'Payment Processing',
+        icon: 'material-symbols:payments-rounded', 
+        route: '#',
+    },
+    {
+      label: 'Reports',
+      icon: 'lucide:clipboard-list', 
+      route: '#',
+  }
+];
 
-  ];
 
   generalMenu: MenuItem[] = [
-    { label: 'Sign Out', icon: 'icon-park-outline:logout', route: '/login' },
+    {
+      label: 'Report a Problem',
+      icon: 'weui:report-problem-filled',
+      route: '#',
+    },
+    { label: 'Sign Out', 
+      icon: 'lets-icons:sign-out-squre', 
+      route: '#' },
   ];
 
   currentMenu: MenuItem[] = [];
   othersMenu: MenuItem[] = [];
 
-  constructor(private router: Router, private sidebarService: SidebarServiceService) {}
+  constructor(private router: Router, private sidebarService: SidebarServiceService, private menuService: MenuService ) {}
 
+  onMenuItemClick(label: string) {
+    this.menuService.setSelectedMenuLabel(label);
+  }
+  
+  
   ngOnInit() {
     this.setMenuByRole();
     this.sidebarService.isCollapsed$.subscribe(
@@ -96,7 +132,7 @@ export class SideBarComponent implements OnInit {
       case 'text-to-speech-icon':
         return 'M18.24 14.040h-17.4c-0.48 0-0.84-0.36-0.84-0.84s0.36-0.84 0.84-0.84h14.92l-1.92-1.44c-0.36-0.28-0.44-0.8-0.16-1.2 0.28-0.36 0.8-0.44 1.2-0.16l3.92 2.96c0.28 0.2 0.4 0.6 0.28 0.96-0.16 0.32-0.48 0.56-0.84 0.56zM4.76 22.6c-0.16 0-0.36-0.040-0.52-0.16l-3.92-2.96c-0.28-0.2-0.4-0.6-0.28-0.96s0.44-0.56 0.8-0.56h17.4c0.48 0 0.84 0.36 0.84 0.84s-0.36 0.84-0.84 0.84h-14.88l1.92 1.44c0.36 0.28 0.44 0.8 0.16 1.2-0.2 0.24-0.44 0.32-0.68 0.32z';
       case 'speech-analyzer-icon':
-        return null; // We're handling this icon directly in the HTML
+        return null;
       default:
         return '';
     }

@@ -1,1 +1,72 @@
-<p>a-dashboard works!</p>
+<section class="rounded-2xl mb-5">
+    <div class="flex gap-5 max-md:flex-col">
+      <article *ngFor="let stat of stats" class="flex flex-col w-3/12 max-md:ml-0 max-md:w-full">
+        <div class="flex flex-col grow px-9 pt-6 pb-7 w-full rounded-2xl bg-slate-800 min-h-[50px] min-w-[252px] max-md:px-5 max-md:mt-10">
+          <h2 class="w-full text-1xl font-medium leading-normal text-amber-400">
+            {{ stat.title }}
+          </h2>
+          <p class="mt-3 w-full text-2xl font-bold leading-none text-white whitespace-nowrap">
+            {{ stat.value }}
+          </p>
+        </div>
+      </article>
+    </div>
+    <section class="flex flex-wrap gap-2.5 mt-5 justify-between items-center px-8 py-8 mb-5 bg-white rounded-2xl border-2 border-solid border-zinc-200 max-md:px-5">
+    <div class="flex flex-col self-stretch my-auto text-1xl min-w-[240px]">
+      <h1 class="max-w-full font-bold leading-none text-neutral-900">
+        User Management
+      </h1>
+      <p class="mt-1.5 max-w-full leading-9 text-slate-500 ">
+        Manage your users and admins, including creating new users, resetting passwords, and updating user profiles.
+      </p>
+    </div>
+    <button
+      class="flex overflow-hidden justify-center items-center self-stretch pr-6 pl-6 my-auto text-1xl font-medium text-center text-white rounded-2xl bg-slate-800 min-h-[50px] min-w-[130px]">
+      <span class="overflow-hidden self-stretch my-auto">Manage Users</span>
+    </button>
+  </section>
+  <section class="flex flex-wrap gap-2.5 justify-between items-center px-8 py-8 mb-5 bg-white rounded-2xl border-2 border-solid border-zinc-200 max-md:px-5">
+    <div class="flex flex-col self-stretch my-auto text-1xl min-w-[240px]">
+      <h1 class="max-w-full font-bold leading-none text-neutral-900">
+        Business Enrollment Management
+      </h1>
+      <p class="mt-1.5 max-w-full leading-9 text-slate-500 w-[650px]">
+        Manage business enrollments, including approving or denying business enrollments and updating business profiles.
+      </p>
+    </div>
+    <button
+      class="flex overflow-hidden justify-center items-center self-stretch pr-6 pl-6 my-auto text-1xl font-medium text-center text-white rounded-2xl bg-slate-800 min-h-[50px] min-w-[130px]">
+      <span class="overflow-hidden self-stretch my-auto">Manage Business Enrollments</span>
+    </button>
+  </section>
+  <section class="flex flex-wrap gap-2.5 justify-between items-center px-8 py-8 mb-5 bg-white rounded-2xl border-2 border-solid border-zinc-200 max-md:px-5">
+    <div class="flex flex-col self-stretch my-auto text-1xl min-w-[240px]">
+      <h1 class="max-w-full font-bold leading-none text-neutral-900">
+        Permit Application Management
+      </h1>
+      <p class="mt-1.5 max-w-full leading-9 text-slate-500 w-[650px]">
+        Manage permit applications, including approving or denying permit applications and updating permit profiles.
+      </p>
+    </div>
+    <button
+      class="flex overflow-hidden justify-center items-center self-stretch pr-6 pl-6 my-auto text-1xl font-medium text-center text-white rounded-2xl bg-slate-800 min-h-[50px] min-w-[130px]">
+      <span class="overflow-hidden self-stretch my-auto">Manage Permit Applications</span>
+    </button>
+  </section>
+  <section class="flex flex-wrap gap-2.5 justify-between items-center px-8 py-8 mb-5 bg-white rounded-2xl border-2 border-solid border-zinc-200 max-md:px-5">
+    <div class="flex flex-col self-stretch my-auto text-1xl min-w-[240px]">
+      <h1 class="max-w-full font-bold leading-none text-neutral-900">
+        Payment Management
+      </h1>
+      <p class="mt-1.5 max-w-full leading-9 text-slate-500 w-[750px]">
+        Manage payments, including viewing payment details, refunding payments, and managing payment methods.
+      </p>
+    </div>
+    <button
+      class="flex overflow-hidden justify-center items-center self-stretch pr-6 pl-6 my-auto text-1xl font-medium text-center text-white rounded-2xl bg-slate-800 min-h-[50px] min-w-[130px] ">
+      <span class="overflow-hidden self-stretch my-auto">Manage Payments</span>
+    </button>
+  </section>
+  </section>
+  
+  

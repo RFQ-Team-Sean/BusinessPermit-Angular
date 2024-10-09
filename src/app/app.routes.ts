@@ -6,6 +6,9 @@ import { UserLayoutComponent } from './features/user/user-layout/user-layout.com
 import { UDashboardComponent } from './features/user/user-layout/u-dashboard/u-dashboard.component';
 import { AdminLayoutComponent } from './features/admin/admin-layout/admin-layout.component';
 import { ADashboardComponent } from './features/admin/admin-layout/a-dashboard/a-dashboard.component';
+import { UserManagementComponent } from './features/admin/admin-layout/user-management/user-management.component';
+import { BusinessEnrollmentComponent } from './features/admin/admin-layout/business-enrollment/business-enrollment.component';
+import { PermitApplicationComponent } from './features/admin/admin-layout/permit-application/permit-application.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -28,6 +31,9 @@ export const routes: Routes = [
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: ADashboardComponent },
+      { path: 'user-management', component: UserManagementComponent },
+      { path: 'business-enrollment', component: BusinessEnrollmentComponent },
+      { path: 'permit-application', component: PermitApplicationComponent },
     ],
   },
   { path: '**', redirectTo: '/login' },
