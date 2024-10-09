@@ -6,6 +6,11 @@ import { FormsModule } from '@angular/forms';
 import { AddUserModalComponent } from './add-user-modal/add-user-modal.component';
 import { User } from './user-model/user.model';
 
+interface SavedSearch {
+  name: string;
+  term: string;
+}
+
 @Component({
   selector: 'app-user-management',
   standalone: true,
@@ -14,6 +19,7 @@ import { User } from './user-model/user.model';
   styleUrls: ['./user-management.component.css'],
 })
 export class UserManagementComponent implements OnInit {
+  Math = Math; // Make Math available in the template
   searchTerm: string = '';
   users: User[] = [
     {
@@ -64,9 +70,20 @@ export class UserManagementComponent implements OnInit {
   ];
 
   itemsPerPageOptions: number[] = [5, 10, 20, 50];
+  itemsPerPage: number = this.itemsPerPageOptions[0];
+  currentPage: number = 1;
   selectedUser: User | null = null;
   showModal: boolean = false;
-  itemsPerPage: number = this.itemsPerPageOptions[0];
+
+  showSortDropdown: boolean = false;
+  currentSort: string = 'Name (A-Z)';
+  sortOptions: string[] = ['Name (A-Z)', 'Name (Z-A)', 'Email (A-Z)', 'Email (Z-A)', 'Join Date (Newest)', 'Join Date (Oldest)'];
+
+  showSavedSearchDropdown: boolean = false;
+  savedSearches: SavedSearch[] = [
+    { name: 'Admin Users', term: 'admin' },
+    { name: 'Recent Users', term: '2023' },
+  ];
 
   ngOnInit(): void {}
 
@@ -77,6 +94,16 @@ export class UserManagementComponent implements OnInit {
       )
     );
   }
+
+  get paginatedUsers(): User[] {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    return this.filteredUsers.slice(startIndex, startIndex + this.itemsPerPage);
+  }
+
+  get totalPages(): number {
+    return Math.ceil(this.filteredUsers.length / this.itemsPerPage);
+  }
+
   openAddUserModal(): void {
     this.selectedUser = null;
     this.showModal = true;
@@ -94,16 +121,9 @@ export class UserManagementComponent implements OnInit {
       newUser.password = 'password123';
     }
     newUser.joinDate = new Date().toLocaleDateString();
-    
-    // Add the new user to the beginning of the array
     this.users.unshift(newUser);
-    
-    // Reset itemsPerPage to show all users if the new total exceeds the current itemsPerPage
-    if (this.users.length > this.itemsPerPage) {
-      this.itemsPerPage = this.users.length;
-    }
-    
     this.closeModal();
+    this.currentPage = 1; // Reset to first page when adding a new user
   }
 
   handleUserUpdated(updatedUser: User): void {
@@ -114,16 +134,68 @@ export class UserManagementComponent implements OnInit {
     this.closeModal();
   }
 
-  
+  deleteUser(user: User): void {
+    if (confirm(`Are you sure you want to delete user ${user.name}?`)) {
+      this.users = this.users.filter(u => u.id !== user.id);
+      if (this.paginatedUsers.length === 0 && this.currentPage > 1) {
+        this.currentPage--;
+      }
+    }
+  }
 
   closeModal(): void {
     this.showModal = false;
     this.selectedUser = null;
   }
 
-  deleteUser(user: User): void {
-    if (confirm(`Are you sure you want to delete user ${user.name}?`)) {
-      this.users = this.users.filter(u => u.id !== user.id);
+  toggleSortDropdown(): void {
+    this.showSortDropdown = !this.showSortDropdown;
+    this.showSavedSearchDropdown = false;
+  }
+
+  sortUsers(option: string): void {
+    this.currentSort = option;
+    this.showSortDropdown = false;
+
+    switch (option) {
+      case 'Name (A-Z)':
+        this.users.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      case 'Name (Z-A)':
+        this.users.sort((a, b) => b.name.localeCompare(a.name));
+        break;
+      case 'Email (A-Z)':
+        this.users.sort((a, b) => a.email.localeCompare(b.email));
+        break;
+      case 'Email (Z-A)':
+        this.users.sort((a, b) => b.email.localeCompare(a.email));
+        break;
+      case 'Join Date (Newest)':
+        this.users.sort((a, b) => new Date(b.joinDate).getTime() - new Date(a.joinDate).getTime());
+        break;
+      case 'Join Date (Oldest)':
+        this.users.sort((a, b) => new Date(a.joinDate).getTime() - new Date(b.joinDate).getTime());
+        break;
     }
+    this.currentPage = 1; // Reset to first page when sorting
+  }
+
+  toggleSavedSearchDropdown(): void {
+    this.showSavedSearchDropdown = !this.showSavedSearchDropdown;
+    this.showSortDropdown = false;
+  }
+
+  applySavedSearch(search: SavedSearch): void {
+    this.searchTerm = search.term;
+    this.showSavedSearchDropdown = false;
+    this.currentPage = 1; // Reset to first page when applying a saved search
+  }
+
+  onPageChange(page: number): void {
+    this.currentPage = page;
+  }
+
+  onItemsPerPageChange(): void {
+    this.currentPage = 1; // Reset to first page when changing items per page
   }
 }

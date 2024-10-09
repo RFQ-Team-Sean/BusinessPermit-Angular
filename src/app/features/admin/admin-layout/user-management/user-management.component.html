@@ -31,18 +31,36 @@
         Add User
       </button>
       <div class="flex items-center gap-4 text-sm font-semibold text-gray-700">
-        <button class="flex items-center gap-2 hover:text-blue-500 transition duration-300 ease-in-out">
-          <span>Sort by</span>
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-            <path d="M3 3a1 1 0 000 2h11a1 1 0 100-2H3zM3 7a1 1 0 000 2h7a1 1 0 100-2H3zM3 11a1 1 0 100 2h4a1 1 0 100-2H3zM15 8a1 1 0 10-2 0v5.586l-1.293-1.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L15 13.586V8z" />
-          </svg>
-        </button>
-        <button class="flex items-center gap-2 hover:text-blue-500 transition duration-300 ease-in-out">
-          <span>Saved search</span>
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clip-rule="evenodd" />
-          </svg>
-        </button>
+        <div class="relative">
+          <button (click)="toggleSortDropdown()" class="flex items-center gap-2 hover:text-blue-500 transition duration-300 ease-in-out">
+            <span>Sort by: {{ currentSort }}</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M3 3a1 1 0 000 2h11a1 1 0 100-2H3zM3 7a1 1 0 000 2h7a1 1 0 100-2H3zM3 11a1 1 0 100 2h4a1 1 0 100-2H3zM15 8a1 1 0 10-2 0v5.586l-1.293-1.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L15 13.586V8z" />
+            </svg>
+          </button>
+          <div *ngIf="showSortDropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
+            <div class="py-1">
+              <a *ngFor="let option of sortOptions" (click)="sortUsers(option)" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">
+                {{ option }}
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="relative">
+          <button (click)="toggleSavedSearchDropdown()" class="flex items-center gap-2 hover:text-blue-500 transition duration-300 ease-in-out">
+            <span>Saved search</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clip-rule="evenodd" />
+            </svg>
+          </button>
+          <div *ngIf="showSavedSearchDropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
+            <div class="py-1">
+              <a *ngFor="let search of savedSearches" (click)="applySavedSearch(search)" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">
+                {{ search.name }}
+              </a>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -53,16 +71,16 @@
       <table class="w-full">
         <thead>
           <tr class="bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-            <th class="px-6 py-3">Name</th>
-            <th class="px-6 py-3">Email</th>
+            <th class="px-6 py-3 cursor-pointer" (click)="sortUsers('Name (A-Z)')">Name</th>
+            <th class="px-6 py-3 cursor-pointer" (click)="sortUsers('Email (A-Z)')">Email</th>
             <th class="px-6 py-3">Phone</th>
-            <th class="px-6 py-3">Registration Date</th>
+            <th class="px-6 py-3 cursor-pointer" (click)="sortUsers('Join Date (Newest)')">Registration Date</th>
             <th class="px-6 py-3">Role</th>
             <th class="px-6 py-3 text-center">Action</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-200">
-          <tr *ngFor="let user of filteredUsers" class="hover:bg-gray-50 transition duration-300 ease-in-out">
+          <tr *ngFor="let user of paginatedUsers" class="hover:bg-gray-50 transition duration-300 ease-in-out">
             <td class="px-6 py-4 whitespace-nowrap">{{ user.name }}</td>
             <td class="px-6 py-4 whitespace-nowrap">{{ user.email }}</td>
             <td class="px-6 py-4 whitespace-nowrap">{{ user.phone }}</td>
@@ -100,11 +118,12 @@
   </div>
 
   <!-- Pagination Section -->
-  <div class="mt-6 flex items-center justify-between">
-    <div class="flex items-center">
+  <div class="mt-6 flex flex-col sm:flex-row items-center justify-between">
+    <div class="flex items-center mb-4 sm:mb-0">
       <span class="mr-2 text-sm text-gray-700">Items per page:</span>
       <select
         [(ngModel)]="itemsPerPage"
+        (ngModelChange)="onItemsPerPageChange()"
         name="itemsPerPage"
         class="border rounded-md text-sm px-2 py-1"
         aria-label="Select items per page"
@@ -112,8 +131,19 @@
         <option *ngFor="let num of itemsPerPageOptions" [value]="num">{{ num }}</option>
       </select>
     </div>
-    <div class="text-sm text-gray-700">
-      Showing <span class="font-medium">{{ filteredUsers.length }}</span> of <span class="font-medium">{{ users.length }}</span> results
+    <div class="flex items-center">
+      <button
+        *ngFor="let page of [].constructor(totalPages); let i = index"
+        (click)="onPageChange(i + 1)"
+        [class.bg-blue-500]="currentPage === i + 1"
+        [class.text-white]="currentPage === i + 1"
+        class="px-3 py-1 rounded-md text-sm font-medium mx-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      >
+        {{ i + 1 }}
+      </button>
+    </div>
+    <div class="text-sm text-gray-700 mt-4 sm:mt-0">
+      Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to {{ Math.min(currentPage * itemsPerPage, filteredUsers.length) }} of {{ filteredUsers.length }} results
     </div>
   </div>
 </div>
