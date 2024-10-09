@@ -35,7 +35,7 @@ export class SideBarComponent implements OnInit {
     {
       label: 'Dashboard',
       icon: 'material-symbols:dashboard',
-      route: '/admin/a-dashboard',
+      route: '/admin/dashboard',
     },
     {
       label: 'User Management',
