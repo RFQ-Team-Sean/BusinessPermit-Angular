@@ -3,11 +3,13 @@
       <img loading="lazy" src="https://cdn.builder.io/api/v1/image/assets/TEMP/cac385ff8a5ba60507c16d53f9929f7946c495ef16d0c7ebd68607c53926f609?placeholderIfAbsent=true&apiKey=f814d152556d45aeb58d44f206a3cbd4" alt="" class="object-contain shrink-0 self-stretch my-auto aspect-[1.05] w-[21px]" />
       <label for="searchInput" class="sr-only">Search</label>
       <input
-      type="search"
-      id="searchInput"
-      placeholder="Search"
-      class="self-stretch my-auto w-[843px] max-md:max-w-full bg-transparent border-none outline-none"/>
-      
+        type="search"
+        id="searchInput"
+        [(ngModel)]="searchQuery"
+        (input)="onSearch($event)"
+        name="search"
+        placeholder="Search by name, address, or phone"
+        class="self-stretch my-auto w-[843px] max-md:max-w-full bg-transparent border-none outline-none"/>
   </form>
   <div class="flex-1 flex justify-center gap-6">
       <button class="w-28 h-10 bg-blue-500 rounded-lg">
