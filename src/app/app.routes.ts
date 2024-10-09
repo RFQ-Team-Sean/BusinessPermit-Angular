@@ -9,7 +9,8 @@ import { ADashboardComponent } from './features/admin/admin-layout/a-dashboard/a
 import { UserManagementComponent } from './features/admin/admin-layout/user-management/user-management.component';
 import { BusinessEnrollmentComponent } from './features/admin/admin-layout/business-enrollment/business-enrollment.component';
 import { PermitApplicationComponent } from './features/admin/admin-layout/permit-application/permit-application.component';
-
+import { PaymentProcessingComponent } from './features/admin/admin-layout/payment-processing/payment-processing.component';
+import { AdminReportsComponent } from './features/admin/admin-layout/admin-reports/admin-reports.component';
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'login', component: AuthLayoutComponent },
@@ -34,6 +35,9 @@ export const routes: Routes = [
       { path: 'user-management', component: UserManagementComponent },
       { path: 'business-enrollment', component: BusinessEnrollmentComponent },
       { path: 'permit-application', component: PermitApplicationComponent },
+      { path: 'payment-processing', component: PaymentProcessingComponent }, // Fixed path here
+      {path:'admin-reports', component: AdminReportsComponent}
+      
     ],
   },
   { path: '**', redirectTo: '/login' },
