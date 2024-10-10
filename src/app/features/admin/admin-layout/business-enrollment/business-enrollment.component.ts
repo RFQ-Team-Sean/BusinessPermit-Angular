@@ -24,6 +24,34 @@ export class BusinessEnrollmentComponent {
   itemsPerPage: number = 5;
   itemsPerPageOptions: number[] = [5, 10, 15, 20, 25];
   searchQuery: string = '';
+  showModal: boolean = false;
+  sortOption: keyof User = 'name';
+  sortDirection: 'asc' | 'desc' = 'asc';
+  savedSearches: string[] = ['Recent Approvals', 'Pending Reviews', 'Rejected Applications'];
+  selectedSavedSearch: string = '';
+  sortMenuOpen: boolean = false;
+  savedSearchMenuOpen: boolean = false;
+
+  sortOptions: { key: keyof User; label: string }[] = [
+    { key: 'name', label: 'Name' },
+    { key: 'address', label: 'Address' },
+    { key: 'phone', label: 'Phone' },
+    { key: 'joinDate', label: 'Registration Date' },
+    { key: 'status', label: 'Status' }
+  ];
+
+  newUser: User = {
+    name: '',
+    address: '',
+    phone: '',
+    joinDate: new Date().toLocaleDateString('en-US', { 
+      month: 'short', 
+      day: 'numeric', 
+      year: 'numeric' 
+    }),
+    status: 'pending',
+    action: 'Approve'
+  };
 
   allUsers: User[] = [
     {
@@ -92,53 +120,120 @@ export class BusinessEnrollmentComponent {
     }
   ];
 
-   // Getter for paginated and filtered users
-   get users(): User[] {
+  openModal(): void {
+    this.showModal = true;
+    this.resetNewUser();
+  }
+
+  closeModal(): void {
+    this.showModal = false;
+  }
+
+  resetNewUser(): void {
+    this.newUser = {
+      name: '',
+      address: '',
+      phone: '',
+      joinDate: new Date().toLocaleDateString('en-US', { 
+        month: 'short', 
+        day: 'numeric', 
+        year: 'numeric' 
+      }),
+      status: 'pending',
+      action: 'Approve'
+    };
+  }
+
+  addUser(): void {
+    if (this.validateNewUser()) {
+      this.allUsers.unshift({ ...this.newUser });
+      this.closeModal();
+      this.currentPage = 1;
+      this.sortUsers(this.sortOption);
+    }
+  }
+
+  validateNewUser(): boolean {
+    return !!(this.newUser.name && this.newUser.address && this.newUser.phone);
+  }
+
+  sortUsers(option: keyof User): void {
+    if (this.sortOption === option) {
+      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortOption = option;
+      this.sortDirection = 'asc';
+    }
+    
+    this.allUsers.sort((a, b) => {
+      if (a[option] < b[option]) return this.sortDirection === 'asc' ? -1 : 1;
+      if (a[option] > b[option]) return this.sortDirection === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }
+
+  applySavedSearch(search: string): void {
+    this.selectedSavedSearch = search;
+    this.searchQuery = '';
+    this.currentPage = 1;
+
+    switch (search) {
+      case 'Recent Approvals':
+        this.searchQuery = 'approved';
+        break;
+      case 'Pending Reviews':
+        this.searchQuery = 'pending';
+        break;
+      case 'Rejected Applications':
+        this.searchQuery = 'rejected';
+        break;
+      default:
+        break;
+    }
+  }
+
+  get users(): User[] {
     let filteredUsers = this.allUsers;
     
-    // Apply search filter if query exists
     if (this.searchQuery) {
       const query = this.searchQuery.toLowerCase();
       filteredUsers = this.allUsers.filter(user => 
         user.name.toLowerCase().includes(query) ||
         user.address.toLowerCase().includes(query) ||
-        user.phone.toLowerCase().includes(query)
+        user.phone.toLowerCase().includes(query) ||
+        user.status.toLowerCase().includes(query)
       );
     }
 
-      // Calculate pagination
-      const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-      const endIndex = startIndex + this.itemsPerPage;
-      
-      return filteredUsers.slice(startIndex, endIndex);
-    }
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    
+    return filteredUsers.slice(startIndex, endIndex);
+  }
 
-    // Get total number of filtered items
   get totalItems(): number {
     if (this.searchQuery) {
       const query = this.searchQuery.toLowerCase();
       return this.allUsers.filter(user => 
         user.name.toLowerCase().includes(query) ||
         user.address.toLowerCase().includes(query) ||
-        user.phone.toLowerCase().includes(query)
+        user.phone.toLowerCase().includes(query) ||
+        user.status.toLowerCase().includes(query)
       ).length;
     }
     return this.allUsers.length;
   }
 
-  // Get total number of pages
   get totalPages(): number {
     return Math.ceil(this.totalItems / this.itemsPerPage);
   }
 
-  // Get display text for current range of items
   get itemsRange(): string {
     const start = (this.currentPage - 1) * this.itemsPerPage + 1;
     const end = Math.min(this.currentPage * this.itemsPerPage, this.totalItems);
     return `${start}-${end} of ${this.totalItems}`;
   }
 
-  // Navigation methods
   nextPage(): void {
     if (this.currentPage < this.totalPages) {
       this.currentPage++;
@@ -151,17 +246,16 @@ export class BusinessEnrollmentComponent {
     }
   }
 
-  // Handle items per page change
   onItemsPerPageChange(event: Event): void {
     const select = event.target as HTMLSelectElement;
     this.itemsPerPage = Number(select.value);
-    this.currentPage = 1; // Reset to first page when changing items per page
+    this.currentPage = 1;
   }
 
-  // Search method
   onSearch(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.searchQuery = input.value;
-    this.currentPage = 1; // Reset to first page when searching
+    this.currentPage = 1;
+    this.selectedSavedSearch = '';
   }
 }
