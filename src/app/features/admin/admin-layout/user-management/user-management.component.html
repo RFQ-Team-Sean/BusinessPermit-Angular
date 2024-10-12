@@ -1,12 +1,13 @@
 <div class="container mx-auto px-4 py-8">
   <!-- Header Section with Search and Add User Button -->
   <div class="flex flex-col md:flex-row gap-5 mb-8">
+    <!-- Search Bar -->
     <form class="flex-grow md:w-[55%] flex items-center py-2 px-4 bg-white rounded-full border border-gray-300 shadow-sm">
       <img
         loading="lazy"
-        src="https://cdn.builder.io/api/v1/image/assets/TEMP/cac385ff8a5ba60507c16d53f9929f7946c495ef16d0c7ebd68607c53926f609?placeholderIfAbsent=true&apiKey=f814d152556d45aeb58d44f206a3cbd4"
+        src="https://cdn.builder.io/api/v1/image/assets/TEMP/cac385ff8a5ba60507c16d53f9929f7946c495ef16d0c7ebd68607c53926f609"
         alt="Search Icon"
-        class="w-5 h-5 mr-3" 
+        class="w-5 h-5 mr-3"
       />
       <label for="searchInput" class="sr-only">Search</label>
       <input
@@ -19,41 +20,69 @@
       />
     </form>
     <div class="flex items-center justify-between md:justify-end gap-4">
+      <!-- Add User Button -->
       <button
         class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300 ease-in-out flex items-center"
         (click)="openAddUserModal()"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-          <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="currentColor">
+          <path
+            fill-rule="evenodd"
+            d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+            clip-rule="evenodd"
+          />
         </svg>
         Add User
       </button>
+      <!-- Sort and Saved Search Dropdowns -->
       <div class="flex items-center gap-4 text-sm font-semibold text-gray-700">
+        <!-- Sort Dropdown -->
         <div class="relative">
-          <button (click)="toggleSortDropdown()" class="flex items-center gap-2 hover:text-blue-500 transition duration-300 ease-in-out">
+          <button
+            (click)="toggleSortDropdown()"
+            class="flex items-center gap-2 hover:text-blue-500 transition duration-300 ease-in-out"
+          >
             <span>Sort by: {{ currentSort }}</span>
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path d="M3 3a1 1 0 000 2h11a1 1 0 100-2H3zM3 7a1 1 0 000 2h7a1 1 0 100-2H3zM3 11a1 1 0 100 2h4a1 1 0 100-2H3zM15 8a1 1 0 10-2 0v5.586l-1.293-1.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L15 13.586V8z" />
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor">
+              <path
+                d="M3 3a1 1 0 000 2h11a1 1 0 100-2H3zM3 7a1 1 0 000 2h7a1 1 0 100-2H3zM3 11a1 1 0 100 2h4a1 1 0 100-2H3z"
+              />
             </svg>
           </button>
           <div *ngIf="showSortDropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
             <div class="py-1">
-              <a *ngFor="let option of sortOptions" (click)="sortUsers(option)" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">
+              <a
+                *ngFor="let option of sortOptions"
+                (click)="sortUsers(option)"
+                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+              >
                 {{ option }}
               </a>
             </div>
           </div>
         </div>
+        <!-- Saved Search Dropdown -->
         <div class="relative">
-          <button (click)="toggleSavedSearchDropdown()" class="flex items-center gap-2 hover:text-blue-500 transition duration-300 ease-in-out">
+          <button
+            (click)="toggleSavedSearchDropdown()"
+            class="flex items-center gap-2 hover:text-blue-500 transition duration-300 ease-in-out"
+          >
             <span>Saved search</span>
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clip-rule="evenodd" />
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor">
+              <path
+                fill-rule="evenodd"
+                d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z"
+                clip-rule="evenodd"
+              />
             </svg>
           </button>
           <div *ngIf="showSavedSearchDropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
             <div class="py-1">
-              <a *ngFor="let search of savedSearches" (click)="applySavedSearch(search)" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">
+              <a
+                *ngFor="let search of savedSearches"
+                (click)="applySavedSearch(search)"
+                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+              >
                 {{ search.name }}
               </a>
             </div>
@@ -72,22 +101,30 @@
             <th class="px-6 py-3 cursor-pointer" (click)="sortUsers('Name (A-Z)')">Name</th>
             <th class="px-6 py-3 cursor-pointer" (click)="sortUsers('Email (A-Z)')">Email</th>
             <th class="px-6 py-3">Phone</th>
-            <th class="px-6 py-3 cursor-pointer" (click)="sortUsers('Join Date (Newest)')">Registration Date</th>
+            <th class="px-6 py-3 cursor-pointer" (click)="sortUsers('Join Date (Newest)')">
+              Registration Date
+            </th>
             <th class="px-6 py-3">Role</th>
             <th class="px-6 py-3 text-center">Action</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-200">
-          <tr *ngFor="let user of paginatedUsers" class="hover:bg-gray-50 transition duration-300 ease-in-out">
+          <tr
+            *ngFor="let user of paginatedUsers"
+            class="hover:bg-gray-50 transition duration-300 ease-in-out"
+          >
             <td class="px-6 py-4 whitespace-nowrap">{{ user.name }}</td>
             <td class="px-6 py-4 whitespace-nowrap">{{ user.email }}</td>
             <td class="px-6 py-4 whitespace-nowrap">{{ user.phone }}</td>
             <td class="px-6 py-4 whitespace-nowrap">{{ user.joinDate }}</td>
             <td class="px-6 py-4 whitespace-nowrap">
-              <span [ngClass]="{
-                'bg-green-100 text-green-800': user.role === 'Admin',
-                'bg-blue-100 text-blue-800': user.role === 'User'
-              }" class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full">
+              <span
+                [ngClass]="{
+                  'bg-green-100 text-green-800': user.role === 'Admin',
+                  'bg-blue-100 text-blue-800': user.role === 'User'
+                }"
+                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
+              >
                 {{ user.role }}
               </span>
             </td>
@@ -116,33 +153,48 @@
   </div>
 
   <!-- Pagination Section -->
-  <div class="mt-6 flex flex-col sm:flex-row items-center justify-between">
-    <div class="flex items-center mb-4 sm:mb-0">
-      <span class="mr-2 text-sm text-gray-700">Items per page:</span>
-      <select
-        [(ngModel)]="itemsPerPage"
-        (ngModelChange)="onItemsPerPageChange()"
-        name="itemsPerPage"
-        class="border rounded-md text-sm px-2 py-1"
-        aria-label="Select items per page"
-      >
-        <option *ngFor="let num of itemsPerPageOptions" [value]="num">{{ num }}</option>
-      </select>
-    </div>
-    <div class="flex items-center">
-      <button
-        *ngFor="let page of [].constructor(totalPages); let i = index"
-        (click)="onPageChange(i + 1)"
-        [class.bg-blue-500]="currentPage === i + 1"
-        [class.text-white]="currentPage === i + 1"
-        class="px-3 py-1 rounded-md text-sm font-medium mx-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
-      >
-        {{ i + 1 }}
-      </button>
-    </div>
-    <div class="text-sm text-gray-700 mt-4 sm:mt-0">
-      Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to {{ Math.min(currentPage * itemsPerPage, filteredUsers.length) }} of {{ filteredUsers.length }} results
-    </div>
+  <div class="flex mt-5 justify-center mb-5">
+    <nav aria-label="Pagination" class="flex flex-col text-xs max-w-[500px] text-neutral-500">
+      <div class="flex gap-8 items-start w-full">
+        <label for="itemsPerPage" class="grow self-stretch">Items per page:</label>
+        <div class="flex gap-2.5 whitespace-nowrap">
+          <select
+            id="itemsPerPage"
+            [ngModel]="itemsPerPage"
+            (change)="onItemsPerPageChange($event)"
+            class="px-2 py-0.5 bg-neutral-100 rounded border border-gray-300"
+            aria-label="Select items per page"
+          >
+            <option *ngFor="let num of itemsPerPageOptions" [value]="num">{{ num }}</option>
+          </select>
+        </div>
+        <div class="flex gap-10 items-center mt-1">
+          <p class="self-stretch">{{ itemsRange }}</p>
+          <div class="flex gap-4">
+            <button
+              aria-label="Previous page"
+              [disabled]="currentPage === 1"
+              (click)="previousPage()"
+              class="focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed p-1"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <button
+              aria-label="Next page"
+              [disabled]="currentPage === totalPages"
+              (click)="nextPage()"
+              class="focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed p-1"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </nav>
   </div>
 </div>
 
