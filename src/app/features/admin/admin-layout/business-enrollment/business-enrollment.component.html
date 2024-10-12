@@ -1,330 +1,193 @@
-<div class="flex gap-5">
-  <form
-    class="flex gap-5 items-center py-2 pl-6 text-sm whitespace-nowrap bg-white rounded-3xl border border-black border-solid rotate-[-0.059deg] text-neutral-700 max-md:pl-5 w-[55%]"
-  >
-    <img
-      loading="lazy"
-      src="https://cdn.builder.io/api/v1/image/assets/TEMP/cac385ff8a5ba60507c16d53f9929f7946c495ef16d0c7ebd68607c53926f609?placeholderIfAbsent=true&apiKey=f814d152556d45aeb58d44f206a3cbd4"
-      alt=""
-      class="object-contain shrink-0 self-stretch my-auto aspect-[1.05] w-[21px]"
-    />
-    <label for="searchInput" class="sr-only">Search</label>
-    <input
-      type="search"
-      id="searchInput"
-      [(ngModel)]="searchQuery"
-      (input)="onSearch($event)"
-      name="search"
-      placeholder="Search by name, address, or phone"
-      class="self-stretch my-auto w-[843px] max-md:max-w-full bg-transparent border-none outline-none"
-    />
-  </form>
-  <div class="flex-1 flex justify-center gap-6">
-    <button class="w-28 h-10 bg-blue-500 rounded-lg" (click)="openModal()">
-      <p class="text-white text-sm">Add user +</p>
-    </button>
-    <header
-      class="flex gap-6 items-center text-sm font-semibold text-neutral-700"
-    >
-      <nav class="flex gap-3 items-center">
-        <div class="relative">
-          <button
-            class="flex items-center gap-2"
-            (click)="sortMenuOpen = !sortMenuOpen"
-          >
-            <span>Sort by: {{ sortOption }}</span>
-            <img
-              src="https://cdn.builder.io/api/v1/image/assets/TEMP/29c7a9c3ec69992bb23e92bfc9f2223bbe4de74210e8009fd17f2b94a803a835?placeholderIfAbsent=true&apiKey=f814d152556d45aeb58d44f206a3cbd4"
-              alt=""
-              class="w-5"
-            />
-          </button>
-          <div
-            *ngIf="sortMenuOpen"
-            class="absolute top-full left-0 bg-white border border-gray-200 rounded shadow-lg z-10"
-          >
-            <button
-              *ngFor="let option of sortOptions"
-              (click)="sortUsers(option.key); sortMenuOpen = false"
-              class="block w-full text-left px-4 py-2 hover:bg-gray-100"
-            >
-              {{ option.label }}
-            </button>
-          </div>
-        </div>
-        <div class="relative">
-          <button
-            class="flex items-center gap-2"
-            (click)="savedSearchMenuOpen = !savedSearchMenuOpen"
-          >
-            <span>Saved search</span>
-            <img
-              src="https://cdn.builder.io/api/v1/image/assets/TEMP/29c7a9c3ec69992bb23e92bfc9f2223bbe4de74210e8009fd17f2b94a803a835?placeholderIfAbsent=true&apiKey=f814d152556d45aeb58d44f206a3cbd4"
-              alt=""
-              class="w-5"
-            />
-            <img
-              src="https://cdn.builder.io/api/v1/image/assets/TEMP/50fc75df9bf0fecaf32c0476555f60d7514d6f735c1aec59004250b4a353725e?placeholderIfAbsent=true&apiKey=f814d152556d45aeb58d44f206a3cbd4"
-              alt=""
-              class="w-[15px]"
-            />
-          </button>
-          <div
-            *ngIf="savedSearchMenuOpen"
-            class="absolute top-full left-0 bg-white border border-gray-200 rounded shadow-lg z-10"
-          >
-            <button
-              *ngFor="let search of savedSearches"
-              (click)="applySavedSearch(search); savedSearchMenuOpen = false"
-              class="block w-full text-left px-4 py-2 hover:bg-gray-100"
-            >
-              {{ search }}
-            </button>
-          </div>
-        </div>
-      </nav>
-    </header>
-  </div>
-</div>
-
-<!-- Add User Modal -->
-<div
-  *ngIf="showModal"
-  class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
->
-  <div class="bg-white rounded-lg p-6 w-full max-w-md">
-    <h2 class="text-xl font-semibold mb-4">Add New Business User</h2>
-
-    <form (ngSubmit)="addUser()" #userForm="ngForm" class="space-y-4">
-      <div>
-        <label for="name" class="block text-sm font-medium text-gray-700"
-          >Business Name</label
-        >
-        <input
-          type="text"
-          id="name"
-          name="name"
-          [(ngModel)]="newUser.name"
-          required
-          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-        />
-      </div>
-
-      <div>
-        <label for="address" class="block text-sm font-medium text-gray-700"
-          >Address</label
-        >
-        <input
-          type="text"
-          id="address"
-          name="address"
-          [(ngModel)]="newUser.address"
-          required
-          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-        />
-      </div>
-
-      <div>
-        <label for="phone" class="block text-sm font-medium text-gray-700"
-          >Phone</label
-        >
-        <input
-          type="tel"
-          id="phone"
-          name="phone"
-          [(ngModel)]="newUser.phone"
-          required
-          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-        />
-      </div>
-
-      <div class="flex justify-end space-x-3 pt-4">
-        <button
-          type="button"
-          (click)="closeModal()"
-          class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
-        >
-          Cancel
-        </button>
-        <button
-          type="submit"
-          [disabled]="!userForm.form.valid"
-          class="px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
-        >
-          Add User
-        </button>
-      </div>
+<div class="container mx-auto px-4 py-8">
+  <!-- Header Section -->
+  <div class="flex flex-col md:flex-row gap-5 mb-8">
+    <!-- Search Bar -->
+    <form class="flex-grow md:w-[55%] flex items-center py-2 px-4 bg-white rounded-full border border-gray-300 shadow-sm">
+      <img
+        loading="lazy"
+        src="https://cdn.builder.io/api/v1/image/assets/TEMP/cac385ff8a5ba60507c16d53f9929f7946c495ef16d0c7ebd68607c53926f609?placeholderIfAbsent=true&apiKey=f814d152556d45aeb58d44f206a3cbd4"
+        alt="Search Icon"
+        class="w-5 h-5 mr-3"
+      />
+      <label for="searchInput" class="sr-only">Search</label>
+      <input
+        type="search"
+        id="searchInput"
+        [(ngModel)]="searchQuery"
+        (input)="onSearch($event)"
+        name="search"
+        placeholder="Search by name, address, or phone"
+        class="w-full bg-transparent border-none outline-none text-sm"
+      />
     </form>
-  </div>
-</div>
 
-<section
-  class="flex overflow-hidden items-start bg-white rounded-2xl border-2 border-solid border-zinc-200 mt-5"
->
-  <div
-    class="flex flex-col flex-1 shrink w-full basis-0 min-w-[240px] max-md:max-w-full"
-  >
-    <div class="flex flex-col w-full max-md:max-w-full">
-      <section
-        class="w-full text-lg font-medium text-neutral-900 max-md:max-w-full"
+    <!-- Action Buttons and Dropdowns -->
+    <div class="flex items-center justify-between md:justify-end gap-4">
+      <!-- Add Business Button -->
+      <button
+        class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300 ease-in-out flex items-center"
+        (click)="openModal()"
       >
-        <table class="w-full bg-white">
-          <thead>
-            <tr class="border-b-2 text-sm">
-              <th class="px-3 py-5 text-center whitespace-nowrap max-md:px-5">
-                Business Name
-              </th>
-              <th class="px-3 py-5 text-center whitespace-nowrap max-md:px-5">
-                Address
-              </th>
-              <th class="px-3 py-5 text-center whitespace-nowrap max-md:px-5">
-                Phone
-              </th>
-              <th class="px-3 py-5 text-center whitespace-nowrap max-md:px-5">
-                Registration Date
-              </th>
-              <th class="px-3 py-5 text-center whitespace-nowrap max-md:px-5">
-                Status
-              </th>
-              <th
-                class="px-3 py-5 text-center whitespace-nowrap text-slate-500 max-md:px-5"
-              >
-                Action
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              *ngFor="let user of users; let i = index"
-              class="border-b-2 text-sm"
-            >
-              <td>
-                <h2 class="px-3 justify-center text-neutral-900 max-md:px-5">
-                  {{ user.name }}
-                </h2>
-              </td>
-              <td>
-                <p class="px-3 whitespace-nowrap text-slate-500 max-md:px-5">
-                  {{ user.address }}
-                </p>
-              </td>
-              <td>
-                <p class="px-3 whitespace-nowrap text-slate-500 max-md:px-5">
-                  {{ user.phone }}
-                </p>
-              </td>
-              <td>
-                <p class="px-3 whitespace-nowrap text-slate-500 max-md:px-5">
-                  {{ user.joinDate }}
-                </p>
-              </td>
-              <td class="py-3">
-                <div
-                  class="flex overflow-hidden justify-center items-center px-3 w-full bg-gray-100 rounded-2xl min-h-[50px] max-md:px-5"
-                  [ngClass]="{
-                    'bg-green-100 text-green-800': user.status === 'approved',
-                    'bg-yellow-100 text-yellow-800': user.status === 'pending',
-                    'bg-red-100 text-red-800': user.status === 'rejected'
-                  }"
-                >
-                  <span class="overflow-hidden self-stretch my-auto">
-                    {{ user.status }}
-                  </span>
-                </div>
-              </td>
-              <td>
-                <div class="flex gap-8 items-center px-16 py-3 max-md:px-5">
-                  <button
-                    aria-label="Edit user"
-                    class="focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    [ngClass]="{
-                      'text-blue-600': user.action === 'Approve',
-                      'text-red-600': user.action === 'Reject',
-                      'text-gray-600': user.action === 'Send notification'
-                    }"
-                  >
-                    {{ user.action }}
-                  </button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </section>
-    </div>
-  </div>
-</section>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
+        </svg>
+        Add Business
+      </button>
 
-<!-- Pagination -->
-<div class="flex mt-5 justify-center mb-5">
-  <nav
-    aria-label="Pagination"
-    class="flex flex-col text-xs max-w-[500px] text-neutral-500"
-  >
-    <div class="flex gap-8 items-start w-full">
-      <label for="itemsPerPage" class="grow self-stretch"
-        >Items per page:</label
-      >
-      <div class="flex gap-2.5 whitespace-nowrap">
-        <select
-          id="itemsPerPage"
-          [ngModel]="itemsPerPage"
-          (change)="onItemsPerPageChange($event)"
-          class="px-2 py-0.5 bg-neutral-100 rounded border border-gray-300"
-          aria-label="Select items per page"
-        >
-          <option *ngFor="let num of itemsPerPageOptions" [value]="num">
-            {{ num }}
-          </option>
-        </select>
-      </div>
-      <div class="flex gap-10 items-center mt-1">
-        <p class="self-stretch">{{ itemsRange }}</p>
-        <div class="flex gap-4">
-          <button
-            aria-label="Previous page"
-            [disabled]="currentPage === 1"
-            (click)="previousPage()"
-            class="focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed p-1"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M15 19l-7-7 7-7"
-              />
+      <!-- Sort and Saved Search Dropdowns -->
+      <div class="flex items-center gap-4 text-sm font-semibold text-gray-700">
+        <!-- Sort Dropdown -->
+        <div class="relative">
+          <button (click)="sortMenuOpen = !sortMenuOpen" class="flex items-center gap-2 hover:text-blue-500 transition duration-300 ease-in-out">
+            <span>Sort by: {{ getSortLabel() }}</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M3 3a1 1 0 000 2h11a1 1 0 100-2H3zM3 7a1 1 0 000 2h7a1 1 0 100-2H3zM3 11a1 1 0 100 2h4a1 1 0 100-2H3zM15 8a1 1 0 10-2 0v5.586l-1.293-1.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L15 13.586V8z" />
             </svg>
           </button>
-          <button
-            aria-label="Next page"
-            [disabled]="currentPage === totalPages"
-            (click)="nextPage()"
-            class="focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed p-1"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M9 5l7 7-7 7"
-              />
+          <div *ngIf="sortMenuOpen" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
+            <div class="py-1">
+              <a *ngFor="let option of sortOptions" 
+                 (click)="sortUsers(option.key); sortMenuOpen = false" 
+                 class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">
+                {{ option.label }}
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Saved Search Dropdown -->
+        <div class="relative">
+          <button (click)="savedSearchMenuOpen = !savedSearchMenuOpen" class="flex items-center gap-2 hover:text-blue-500 transition duration-300 ease-in-out">
+            <span>Saved search</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clip-rule="evenodd" />
             </svg>
           </button>
+          <div *ngIf="savedSearchMenuOpen" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
+            <div class="py-1">
+              <a *ngFor="let search of savedSearches" 
+                 (click)="applySavedSearch(search); savedSearchMenuOpen = false" 
+                 class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">
+                {{ search }}
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  </nav>
+  </div>
+
+<!-- Business Table Section -->
+<div class="bg-white rounded-lg shadow-md overflow-hidden">
+  <div class="overflow-x-auto">
+    <table class="w-full">
+      <thead>
+        <tr class="bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+          <th class="px-6 py-3 cursor-pointer" (click)="sortUsers('name')">Business Name</th>
+          <th class="px-6 py-3 cursor-pointer" (click)="sortUsers('address')">Address</th>
+          <th class="px-6 py-3 cursor-pointer" (click)="sortUsers('phone')">Phone</th>
+          <th class="px-6 py-3 cursor-pointer" (click)="sortUsers('joinDate')">Registration Date</th>
+          <th class="px-6 py-3 cursor-pointer" (click)="sortUsers('status')">Status</th>
+          <th class="px-6 py-3 text-center">Action</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-200">
+        <tr *ngFor="let user of users" class="hover:bg-gray-50 transition duration-300 ease-in-out">
+          <td class="px-6 py-4 whitespace-nowrap">{{ user.name }}</td>
+          <td class="px-6 py-4 whitespace-nowrap">{{ user.address }}</td>
+          <td class="px-6 py-4 whitespace-nowrap">{{ user.phone }}</td>
+          <td class="px-6 py-4 whitespace-nowrap">{{ user.joinDate }}</td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span [ngClass]="getStatusClass(user.status)" class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full">
+              {{ user.status }}
+            </span>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-center">
+            <ng-container *ngIf="user.status === 'pending'; else otherAction">
+              <button
+                (click)="handleAction(user, 'approve')"
+                class="text-green-600 hover:text-green-900 focus:outline-none focus:underline mr-2"
+              >
+                Approve
+              </button>
+              <button
+                (click)="handleAction(user, 'reject')"
+                class="text-red-600 hover:text-red-900 focus:outline-none focus:underline"
+              >
+                Reject
+              </button>
+            </ng-container>
+            <ng-template #otherAction>
+              <button
+                *ngIf="user.action"
+                (click)="handleAction(user)"
+                class="text-indigo-600 hover:text-indigo-900 focus:outline-none focus:underline"
+                [ngClass]="getActionClass(user.action)"
+              >
+                {{ getActionLabel(user.action) }}
+              </button>
+            </ng-template>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <!-- Empty state when no users are found -->
+  <div *ngIf="users.length === 0" class="text-center p-8 text-gray-500">
+    No businesses found.
+  </div>
 </div>
+
+  <!-- Pagination Section -->
+  <div class="flex mt-5 justify-center mb-5">
+    <nav aria-label="Pagination" class="flex flex-col text-xs max-w-[500px] text-neutral-500">
+      <div class="flex gap-8 items-start w-full">
+        <label for="itemsPerPage" class="grow self-stretch">Items per page:</label>
+        <div class="flex gap-2.5 whitespace-nowrap">
+          <select
+            id="itemsPerPage"
+            [ngModel]="itemsPerPage"
+            (change)="onItemsPerPageChange($event)"
+            class="px-2 py-0.5 bg-neutral-100 rounded border border-gray-300"
+            aria-label="Select items per page"
+          >
+            <option *ngFor="let num of itemsPerPageOptions" [value]="num">{{ num }}</option>
+          </select>
+        </div>
+        <div class="flex gap-10 items-center mt-1">
+          <p class="self-stretch">{{ itemsRange }}</p>
+          <div class="flex gap-4">
+            <button
+              aria-label="Previous page"
+              [disabled]="currentPage === 1"
+              (click)="previousPage()"
+              class="focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed p-1"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <button
+              aria-label="Next page"
+              [disabled]="currentPage === totalPages"
+              (click)="nextPage()"
+              class="focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed p-1"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </div>
+</div>
+
+<!-- Add Business Modal -->
+<app-add-business-user-modal
+  *ngIf="showModal"
+  [showModal]="showModal"
+  (closeModal)="closeModal()"
+  (addUser)="handleAddUser($event)"
+></app-add-business-user-modal>
