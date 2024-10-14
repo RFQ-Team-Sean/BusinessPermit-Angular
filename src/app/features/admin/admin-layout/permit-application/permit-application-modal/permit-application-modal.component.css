@@ -1,0 +1,11 @@
+/* Hide the scrollbar in WebKit-based browsers */
+::-webkit-scrollbar {
+    width: 0; /* Hide scrollbar */
+    height: 0; /* Hide horizontal scrollbar if needed */
+  }
+  
+  .custom-scroll {
+    overflow: auto;
+    scrollbar-width: none; /* Hide scrollbar for Firefox */
+  }
+  

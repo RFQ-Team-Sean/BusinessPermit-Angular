@@ -1,0 +1,345 @@
+<div class="modal fixed inset-0 flex justify-center bg-black bg-opacity-50 z-50 py-10 pl-60" >
+    <div class="flex gap-2.5 items-center px-10 py-2 bg-white rounded-3xl max-md:px-5 overflow-hidden overflow-y-auto custom-scroll">
+      <div class="flex  flex-col self-stretch py-5 my-auto max-w-[960px] min-w-[240px] w-[960px] max-md:max-w-full">
+      <div class="relative">
+                <button (click)="onClose()" class="absolute top-2 right-2 text-gray-600 hover:text-gray-800">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                  </svg>
+                </button>
+              </div>
+        <div class="flex flex-wrap gap-3 justify-between items-start p-4 w-full max-md:max-w-full">
+        <div class="flex flex-col min-w-[288px] w-[306px]">   
+            <div class="w-full text-4xl font-black tracking-tighter leading-none text-neutral-900">
+              Application - 1234
+            </div>
+            <div class="mt-3 w-full text-base text-slate-500">
+              Submitted by Jane Doe
+            </div>
+          </div>
+        </div>
+        <div
+          class="px-4 pt-5 pb-3 w-full text-2xl font-bold leading-none text-neutral-900 max-md:max-w-full"
+        >
+          Business Information
+        </div>
+        <div class="flex flex-col p-4 w-full max-md:max-w-full">
+          <div
+            class="flex flex-wrap flex-1 text-sm size-full max-md:max-w-full"
+          >
+            <div
+              class="flex flex-col grow shrink py-4 pr-2 border-t border-gray-200 min-w-[240px] w-[371px] max-md:max-w-full"
+            >
+              <div
+                class="w-full whitespace-nowrap text-slate-500 max-md:max-w-full"
+              >
+                Name
+              </div>
+              <div class="mt-1 w-full text-neutral-900 max-md:max-w-full">
+                Jane's Boutique
+              </div>
+            </div>
+            <div
+              class="flex flex-col grow shrink py-4 pl-2 whitespace-nowrap border-t border-gray-200 min-w-[240px] w-[371px] max-md:max-w-full"
+            >
+              <div class="w-full text-slate-500 max-md:max-w-full">Email</div>
+              <div class="mt-1 w-full text-neutral-900 max-md:max-w-full">
+                jane"&#64;"example.com
+              </div>
+            </div>
+          </div>
+          <div
+            class="flex flex-wrap flex-1 text-sm size-full max-md:max-w-full"
+          >
+            <div
+              class="flex flex-col grow shrink py-4 pr-2 whitespace-nowrap border-t border-gray-200 min-w-[240px] w-[371px] max-md:max-w-full"
+            >
+              <div class="w-full text-slate-500 max-md:max-w-full">Phone</div>
+              <div class="mt-1 w-full text-neutral-900 max-md:max-w-full">
+                123-456-7890
+              </div>
+            </div>
+            <div
+              class="flex flex-col grow shrink py-4 pl-2 border-t border-gray-200 min-w-[240px] w-[371px] max-md:max-w-full"
+            >
+              <div
+                class="w-full whitespace-nowrap text-slate-500 max-md:max-w-full"
+              >
+                Address
+              </div>
+              <div class="mt-1 w-full text-neutral-900 max-md:max-w-full">
+                1234 Main St
+              </div>
+            </div>
+          </div>
+          <div
+            class="flex flex-wrap flex-1 text-sm whitespace-nowrap size-full max-md:max-w-full"
+          >
+            <div
+              class="flex flex-col grow shrink py-4 pr-2 border-t border-gray-200 min-w-[240px] w-[371px] max-md:max-w-full"
+            >
+              <div class="w-full text-slate-500 max-md:max-w-full">City</div>
+              <div class="mt-1 w-full text-neutral-900 max-md:max-w-full">
+                Springfield
+              </div>
+            </div>
+            <div
+              class="flex flex-col grow shrink py-4 pl-2 border-t border-gray-200 min-w-[240px] w-[371px] max-md:max-w-full"
+            >
+              <div class="w-full text-slate-500 max-md:max-w-full">State</div>
+              <div class="mt-1 w-full text-neutral-900 max-md:max-w-full">
+                IL
+              </div>
+            </div>
+          </div>
+          <div
+            class="flex flex-wrap flex-1 text-sm whitespace-nowrap size-full max-md:max-w-full"
+          >
+            <div
+              class="flex flex-col grow shrink py-4 pr-2 border-t border-gray-200 min-w-[240px] w-[371px] max-md:max-w-full"
+            >
+              <div class="w-full text-slate-500 max-md:max-w-full">Zip</div>
+              <div class="mt-1 w-full text-neutral-900 max-md:max-w-full">
+                62701
+              </div>
+            </div>
+            <div
+              class="flex flex-col grow shrink py-4 pl-2 border-t border-gray-200 min-w-[240px] w-[371px] max-md:max-w-full"
+            >
+              <div class="w-full text-slate-500 max-md:max-w-full">Country</div>
+              <div class="mt-1 w-full text-neutral-900 max-md:max-w-full">
+                USA
+              </div>
+            </div>
+          </div>
+          <div class="flex flex-1 size-full max-md:max-w-full">
+            <div
+              class="flex py-4 border-t border-gray-200 min-h-[79px] min-w-[240px] w-[464px]"
+            ></div>
+          </div>
+        </div>
+        <div
+          class="px-4 pt-5 pb-3 w-full text-2xl font-bold leading-none text-neutral-900 max-md:max-w-full"
+        >
+          Application Details
+        </div>
+        <div class="flex flex-col p-4 w-full text-sm max-md:max-w-full">
+          <div class="flex flex-wrap flex-1 size-full max-md:max-w-full">
+            <div
+              class="flex flex-col grow shrink py-4 pr-2 border-t border-gray-200 min-w-[240px] w-[371px] max-md:max-w-full"
+            >
+              <div
+                class="w-full whitespace-nowrap text-slate-500 max-md:max-w-full"
+              >
+                Type
+              </div>
+              <div class="mt-1 w-full text-neutral-900 max-md:max-w-full">
+                Fashion Show
+              </div>
+            </div>
+            <div
+              class="flex flex-col grow shrink py-4 pl-2 border-t border-gray-200 min-w-[240px] w-[371px] max-md:max-w-full"
+            >
+              <div class="w-full text-slate-500 max-md:max-w-full">
+                Start Date
+              </div>
+              <div
+                class="mt-1 w-full whitespace-nowrap text-neutral-900 max-md:max-w-full"
+              >
+                2023-01-01
+              </div>
+            </div>
+          </div>
+          <div class="flex flex-wrap flex-1 size-full max-md:max-w-full">
+            <div
+              class="flex flex-col grow shrink py-4 pr-2 border-t border-gray-200 min-w-[240px] w-[371px] max-md:max-w-full"
+            >
+              <div class="w-full text-slate-500 max-md:max-w-full">
+                End Date
+              </div>
+              <div
+                class="mt-1 w-full whitespace-nowrap text-neutral-900 max-md:max-w-full"
+              >
+                2023-12-31
+              </div>
+            </div>
+            <div
+              class="flex flex-col grow shrink py-4 pl-2 border-t border-gray-200 min-w-[240px] w-[371px] max-md:max-w-full"
+            >
+              <div
+                class="w-full whitespace-nowrap text-slate-500 max-md:max-w-full"
+              >
+                Duration
+              </div>
+              <div class="mt-1 w-full text-neutral-900 max-md:max-w-full">
+                1 year
+              </div>
+            </div>
+          </div>
+          <div class="flex flex-wrap flex-1 size-full max-md:max-w-full">
+            <div
+              class="flex flex-col grow shrink py-4 pr-2 whitespace-nowrap border-t border-gray-200 min-w-[240px] w-[371px] max-md:max-w-full"
+            >
+              <div class="w-full text-slate-500 max-md:max-w-full">
+                Location
+              </div>
+              <div class="mt-1 w-full text-neutral-900 max-md:max-w-full">
+                Online
+              </div>
+            </div>
+            <div
+              class="flex flex-col grow shrink py-4 pl-2 border-t border-gray-200 min-w-[240px] w-[371px] max-md:max-w-full"
+            >
+              <div
+                class="w-full whitespace-nowrap text-slate-500 max-md:max-w-full"
+              >
+                Description
+              </div>
+              <div class="mt-1 w-full text-neutral-900 max-md:max-w-full">
+                A virtual fashion show showcasing the latest trends and designs.
+              </div>
+            </div>
+          </div>
+          <div class="flex flex-wrap flex-1 size-full max-md:max-w-full">
+            <div
+              class="flex flex-col grow shrink py-4 pr-2 border-t border-gray-200 min-w-[240px] w-[371px] max-md:max-w-full"
+            >
+              <div
+                class="w-full whitespace-nowrap text-slate-500 max-md:max-w-full"
+              >
+                Activities
+              </div>
+              <div class="mt-1 w-full text-neutral-900 max-md:max-w-full">
+                Runway walk, music, dance, Q&A, sponsor highlights
+              </div>
+            </div>
+            <div
+              class="flex flex-col grow shrink py-4 pl-2 border-t border-gray-200 min-w-[240px] w-[371px] max-md:max-w-full"
+            >
+              <div class="w-full text-slate-500 max-md:max-w-full">
+                Funds Raised
+              </div>
+              <div
+                class="mt-1 w-full whitespace-nowrap text-neutral-900 max-md:max-w-full"
+              >
+                $10,000
+              </div>
+            </div>
+          </div>
+          <div class="flex flex-wrap flex-1 size-full max-md:max-w-full">
+            <div
+              class="flex flex-col grow shrink py-4 pr-2 border-t border-gray-200 min-w-[240px] w-[371px] max-md:max-w-full"
+            >
+              <div class="w-full text-slate-500 max-md:max-w-full">
+                Funds Spent
+              </div>
+              <div
+                class="mt-1 w-full whitespace-nowrap text-neutral-900 max-md:max-w-full"
+              >
+                $8,000
+              </div>
+            </div>
+            <div
+              class="flex flex-col grow shrink py-4 pl-2 border-t border-gray-200 min-w-[240px] w-[371px] max-md:max-w-full"
+            >
+              <div class="w-full text-slate-500 max-md:max-w-full">
+                Number of Participants
+              </div>
+              <div
+                class="mt-1 w-full whitespace-nowrap text-neutral-900 max-md:max-w-full"
+              >
+                20
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="px-4 pt-5 pb-3 w-full text-2xl font-bold leading-none whitespace-nowrap text-neutral-900 max-md:max-w-full"
+        >
+          Attachments
+        </div>
+        <div
+          class="flex flex-wrap gap-4 items-center px-4 py-2 w-full bg-slate-50 min-h-[72px] max-md:max-w-full"
+        >
+          <img
+            loading="lazy"
+            src="/assets/sample1.png"
+            class="object-contain shrink-0 self-stretch my-auto w-14 rounded-lg aspect-square"
+          />
+          <div
+            class="flex flex-col justify-center self-stretch my-auto min-w-[240px] w-[282px]"
+          >
+            <div
+              class="overflow-hidden max-w-full text-base font-medium text-neutral-900 w-[282px]"
+            >
+              Business Doc
+            </div>
+            <div
+              class="overflow-hidden max-w-full text-sm text-slate-500 w-[182px]"
+            >
+              Business Doc 2.pdf (2.3 MB)
+            </div>
+          </div>
+        </div>
+        <div
+          class="flex flex-wrap gap-4 items-center px-4 py-2 w-full bg-slate-50 min-h-[72px] max-md:max-w-full"
+        >
+          <img
+            loading="lazy"
+            src="/assets/sample.jpg"
+            class="object-contain shrink-0 self-stretch my-auto w-14 rounded-lg aspect-square"
+          />
+          <div
+            class="flex flex-col justify-center self-stretch my-auto w-[215px]"
+          >
+            <div
+              class="overflow-hidden max-w-full text-base font-medium text-neutral-900 w-[215px]"
+            >
+              Business Doc 2
+            </div>
+            <div
+              class="overflow-hidden max-w-full text-sm text-slate-500 w-[181px]"
+            >
+              Business Doc 2.doc (1.5 MB)
+            </div>
+          </div>
+        </div>
+        <div class="px-4 pt-5 pb-3 w-full text-2xl font-bold leading-none whitespace-nowrap text-neutral-900 max-md:max-w-full">
+            Feedback
+          </div>
+          <div class="flex flex-wrap gap-4 items-end px-4 py-3 max-w-full w-[480px]">
+            <div class="flex flex-col flex-1 shrink w-full basis-0 min-w-[160px] max-md:max-w-full">
+              <!-- Textarea replacing the div -->
+              <textarea
+                class="flex flex-1 py-4 w-full rounded-xl border border-solid bg-slate-50 border-slate-300 min-h-[144px] max-md:max-w-full px-4 text-neutral-900"
+                placeholder="Enter your feedback here..."
+              ></textarea>
+            </div>
+          </div>
+          
+        <div
+          class="flex justify-between items-start w-full text-sm font-bold text-center whitespace-nowrap max-md:max-w-full"
+        >
+        <div class="flex flex-wrap flex-1 shrink gap-3 items-start px-4 py-3 w-full basis-0 min-w-[240px] max-md:max-w-full">
+            <button
+              class="flex overflow-hidden justify-center items-center px-4 rounded-xl max-w-[480px] min-h-[40px] min-w-[84px] text-neutral-900 bg-transparent hover:bg-gray-200 focus:outline-none"
+              
+            >
+              <div class="overflow-hidden self-stretch my-auto w-[43px]">
+                Reject
+              </div>
+            </button>
+            <button
+              class="flex overflow-hidden justify-center items-center px-4 bg-sky-700 rounded-xl max-w-[480px] min-h-[40px] min-w-[84px] text-slate-50 w-[88px] hover:bg-sky-600 focus:outline-none"
+              
+            >
+              <div class="overflow-hidden self-stretch my-auto w-14">
+                Approve
+              </div>
+            </button>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+ </div>
