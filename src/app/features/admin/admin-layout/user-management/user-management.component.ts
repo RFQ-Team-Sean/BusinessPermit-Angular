@@ -1,254 +1,241 @@
-// src/app/user-management/user-management.component.ts
-
-import { Component, OnInit } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { AddUserModalComponent } from './add-user-modal/add-user-modal.component';
-import { User } from './user-model/user.model';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { environment } from '../../../../../environments/environments.prod';
+
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  phone: string;
+  registration_date: string;
+  role: string;
+}
 
 interface SavedSearch {
   name: string;
-  term: string;
+  query: string;
 }
 
 @Component({
   selector: 'app-user-management',
   standalone: true,
-  imports: [CommonModule, FormsModule, AddUserModalComponent],
+  imports: [CommonModule, FormsModule],
   templateUrl: './user-management.component.html',
   styleUrls: ['./user-management.component.css'],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class UserManagementComponent implements OnInit {
-  Math = Math; // Make Math available in the template
+  private supabase: SupabaseClient;
   searchTerm: string = '';
-  users: User[] = [
-    {
-      id: 1,
-      name: 'Angelo John Calleja',
-      email: 'angelo@example.com',
-      phone: '0917-123-4567',
-      joinDate: 'Jan 1, 2023',
-      role: 'User',
-      password: 'password123',
-    },
-    {
-      id: 2,
-      name: 'Maria Clara Reyes',
-      email: 'maria@example.com',
-      phone: '0917-234-5678',
-      joinDate: 'Feb 15, 2023',
-      role: 'Admin',
-      password: 'password123',
-    },
-    {
-      id: 3,
-      name: 'Jose Rizal',
-      email: 'jose@example.com',
-      phone: '0917-345-6789',
-      joinDate: 'Mar 30, 2023',
-      role: 'User',
-      password: 'password123',
-    },
-    {
-      id: 4,
-      name: 'Juan Luna',
-      email: 'juan@example.com',
-      phone: '0917-456-7890',
-      joinDate: 'Apr 5, 2023',
-      role: 'User',
-      password: 'password123',
-    },
-    {
-      id: 5,
-      name: 'Emilio Aguinaldo',
-      email: 'emilio@example.com',
-      phone: '0917-567-8901',
-      joinDate: 'May 20, 2023',
-      role: 'User',
-      password: 'password123',
-    },
-    // Add more users if needed
-  ];
-
+  users: User[] = [];
+  filteredUsers: User[] = [];
+  paginatedUsers: User[] = [];
   itemsPerPageOptions: number[] = [5, 10, 20, 50];
-  itemsPerPage: number = this.itemsPerPageOptions[0];
+  itemsPerPage: number = 10;
   currentPage: number = 1;
-  selectedUser: User | null = null;
+  totalPages: number = 1;
+  itemsRange: string = '';
+  loading: boolean = true;
+  error: string | null = null;
   showModal: boolean = false;
-
+  selectedUser: User | null = null;
   showSortDropdown: boolean = false;
-  currentSort: string = 'Name (A-Z)';
-  sortOptions: string[] = [
-    'Name (A-Z)',
-    'Name (Z-A)',
-    'Email (A-Z)',
-    'Email (Z-A)',
-    'Join Date (Newest)',
-    'Join Date (Oldest)',
-  ];
-
   showSavedSearchDropdown: boolean = false;
+  currentSort: string = 'Name (A-Z)';
+  sortOptions: string[] = ['Name (A-Z)', 'Name (Z-A)', 'Email (A-Z)', 'Email (Z-A)', 'Join Date (Newest)', 'Join Date (Oldest)'];
   savedSearches: SavedSearch[] = [
-    { name: 'Admin Users', term: 'admin' },
-    { name: 'Recent Users', term: '2023' },
+    { name: 'Admin Users', query: 'role:Admin' },
+    { name: 'Recent Joins', query: 'join_date:>2023-01-01' }
   ];
 
-  ngOnInit(): void {}
-
-  // Getter for filtered users based on the search term
-  get filteredUsers(): User[] {
-    return this.users.filter((user) =>
-      Object.values(user).some((value) =>
-        value.toString().toLowerCase().includes(this.searchTerm.toLowerCase())
-      )
-    );
+  constructor() {
+    this.supabase = createClient(environment.supabaseUrl, environment.supabaseKey);
   }
 
-  // Getter for paginated users based on current page and items per page
-  get paginatedUsers(): User[] {
+  async ngOnInit() {
+    await this.fetchUsers();
+  }
+
+  async fetchUsers() {
+    try {
+      this.loading = true;
+      const { data, error } = await this.supabase
+        .from('usermanagement')
+        .select('id, name, email, phone, registration_date, role');
+
+      if (error) throw error;
+
+      this.users = data;
+      this.applyFiltersAndPagination();
+    } catch (err) {
+      if (err instanceof Error) {
+        this.error = err.message;
+      } else {
+        this.error = 'An unknown error occurred';
+      }
+    } finally {
+      this.loading = false;
+    }
+  }
+
+
+  applyFiltersAndPagination() {
+    this.filteredUsers = this.users.filter(user =>
+      user.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+      user.email.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+      user.phone.includes(this.searchTerm) ||
+      user.registration_date.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+      user.role.toLowerCase().includes(this.searchTerm.toLowerCase())
+    );
+
+    this.totalPages = Math.ceil(this.filteredUsers.length / this.itemsPerPage);
+    this.currentPage = 1;
+    this.updatePaginatedUsers();
+  }
+
+  updatePaginatedUsers() {
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-    return this.filteredUsers.slice(
-      startIndex,
-      startIndex + this.itemsPerPage
-    );
+    const endIndex = startIndex + this.itemsPerPage;
+    this.paginatedUsers = this.filteredUsers.slice(startIndex, endIndex);
+    this.updateItemsRange();
   }
 
-  // Getter for total number of pages
-  get totalPages(): number {
-    return Math.ceil(this.filteredUsers.length / this.itemsPerPage);
+  updateItemsRange() {
+    const start = (this.currentPage - 1) * this.itemsPerPage + 1;
+    const end = Math.min(this.currentPage * this.itemsPerPage, this.filteredUsers.length);
+    this.itemsRange = `${start}-${end} of ${this.filteredUsers.length}`;
   }
 
-  // Getter for displaying the range of items currently shown
-  get itemsRange(): string {
-    const startItem = (this.currentPage - 1) * this.itemsPerPage + 1;
-    const endItem = Math.min(
-      startItem + this.paginatedUsers.length - 1,
-      this.filteredUsers.length
-    );
-    return `${startItem}-${endItem} of ${this.filteredUsers.length}`;
+  onItemsPerPageChange(event: Event) {
+    this.itemsPerPage = parseInt((event.target as HTMLSelectElement).value);
+    this.applyFiltersAndPagination();
   }
 
-  // Navigate to the previous page
-  previousPage(): void {
+  previousPage() {
     if (this.currentPage > 1) {
       this.currentPage--;
+      this.updatePaginatedUsers();
     }
   }
 
-  // Navigate to the next page
-  nextPage(): void {
+  nextPage() {
     if (this.currentPage < this.totalPages) {
       this.currentPage++;
+      this.updatePaginatedUsers();
     }
   }
 
-  // Handle change in items per page
-  onItemsPerPageChange(event: Event): void {
-    const target = event.target as HTMLSelectElement;
-    this.itemsPerPage = Number(target.value);
-    this.currentPage = 1; // Reset to first page when changing items per page
-  }
-
-  // Open the modal to add a new user
-  openAddUserModal(): void {
+  openAddUserModal() {
     this.selectedUser = null;
     this.showModal = true;
   }
 
-  // Open the modal to edit an existing user
-  openEditUserModal(user: User): void {
-    this.selectedUser = { ...user };
+  openEditUserModal(user: User) {
+    this.selectedUser = user;
     this.showModal = true;
   }
 
-  // Handle adding a new user
-  handleUserAdded(newUser: User): void {
-    const newId =
-      this.users.length > 0 ? Math.max(...this.users.map((u) => u.id || 0)) + 1 : 1;
-    newUser.id = newId;
-    if (!newUser.password) {
-      newUser.password = 'password123';
-    }
-    newUser.joinDate = new Date().toLocaleDateString();
-    this.users.unshift(newUser);
-    this.closeModal();
-    this.currentPage = 1; // Reset to first page when adding a new user
-  }
-
-  // Handle updating an existing user
-  handleUserUpdated(updatedUser: User): void {
-    const index = this.users.findIndex((u) => u.id === updatedUser.id);
-    if (index !== -1) {
-      this.users[index] = { ...this.users[index], ...updatedUser };
-    }
-    this.closeModal();
-  }
-
-  // Delete a user from the list
-  deleteUser(user: User): void {
-    if (confirm(`Are you sure you want to delete user ${user.name}?`)) {
-      this.users = this.users.filter((u) => u.id !== user.id);
-      // Adjust current page if necessary
-      if (this.paginatedUsers.length === 0 && this.currentPage > 1) {
-        this.currentPage--;
-      }
-    }
-  }
-
-  // Close the modal
-  closeModal(): void {
+  closeModal() {
     this.showModal = false;
     this.selectedUser = null;
   }
 
-  // Toggle the sort dropdown visibility
-  toggleSortDropdown(): void {
-    this.showSortDropdown = !this.showSortDropdown;
-    this.showSavedSearchDropdown = false;
+  async handleUserAdded(user: User) {
+    try {
+      const { data, error } = await this.supabase
+        .from('usermanagement')
+        .insert([user])
+        .select();
+
+      if (error) throw error;
+
+      this.users.push(data[0]);
+      this.applyFiltersAndPagination();
+      this.closeModal();
+    } catch (error) {
+      console.error('Error adding user:', error);
+    }
   }
 
-  // Sort users based on the selected option
-  sortUsers(option: string): void {
+  async handleUserUpdated(updatedUser: User) {
+    try {
+      const { error } = await this.supabase
+        .from('usermanagement')
+        .update(updatedUser)
+        .eq('id', updatedUser.id);
+
+      if (error) throw error;
+
+      const index = this.users.findIndex(u => u.id === updatedUser.id);
+      if (index !== -1) {
+        this.users[index] = updatedUser;
+        this.applyFiltersAndPagination();
+      }
+      this.closeModal();
+    } catch (error) {
+      console.error('Error updating user:', error);
+    }
+  }
+
+  async deleteUser(user: User) {
+    if (confirm(`Are you sure you want to delete ${user.name}?`)) {
+      try {
+        const { error } = await this.supabase
+          .from('usermanagement')
+          .delete()
+          .eq('id', user.id);
+
+        if (error) throw error;
+
+        this.users = this.users.filter(u => u.id !== user.id);
+        this.applyFiltersAndPagination();
+      } catch (error) {
+        console.error('Error deleting user:', error);
+      }
+    }
+  }
+
+  toggleSortDropdown() {
+    this.showSortDropdown = !this.showSortDropdown;
+  }
+
+  toggleSavedSearchDropdown() {
+    this.showSavedSearchDropdown = !this.showSavedSearchDropdown;
+  }
+
+  sortUsers(option: string) {
     this.currentSort = option;
     this.showSortDropdown = false;
 
     switch (option) {
       case 'Name (A-Z)':
-        this.users.sort((a, b) => a.name.localeCompare(b.name));
+        this.filteredUsers.sort((a, b) => a.name.localeCompare(b.name));
         break;
       case 'Name (Z-A)':
-        this.users.sort((a, b) => b.name.localeCompare(a.name));
+        this.filteredUsers.sort((a, b) => b.name.localeCompare(a.name));
         break;
       case 'Email (A-Z)':
-        this.users.sort((a, b) => a.email.localeCompare(b.email));
+        this.filteredUsers.sort((a, b) => a.email.localeCompare(b.email));
         break;
       case 'Email (Z-A)':
-        this.users.sort((a, b) => b.email.localeCompare(a.email));
+        this.filteredUsers.sort((a, b) => b.email.localeCompare(a.email));
         break;
       case 'Join Date (Newest)':
-        this.users.sort(
-          (a, b) => new Date(b.joinDate).getTime() - new Date(a.joinDate).getTime()
-        );
+        this.filteredUsers.sort((a, b) => new Date(b.registration_date).getTime() - new Date(a.registration_date).getTime());
         break;
       case 'Join Date (Oldest)':
-        this.users.sort(
-          (a, b) => new Date(a.joinDate).getTime() - new Date(b.joinDate).getTime()
-        );
+        this.filteredUsers.sort((a, b) => new Date(a.registration_date).getTime() - new Date(b.registration_date).getTime());
         break;
     }
-    this.currentPage = 1; // Reset to first page when sorting
+
+    this.updatePaginatedUsers();
   }
 
-  // Toggle the saved search dropdown visibility
-  toggleSavedSearchDropdown(): void {
-    this.showSavedSearchDropdown = !this.showSavedSearchDropdown;
-    this.showSortDropdown = false;
-  }
-
-  // Apply a saved search
-  applySavedSearch(search: SavedSearch): void {
-    this.searchTerm = search.term;
+  applySavedSearch(search: SavedSearch) {
+    this.searchTerm = search.query;
     this.showSavedSearchDropdown = false;
-    this.currentPage = 1; // Reset to first page when applying a saved search
+    this.applyFiltersAndPagination();
   }
 }

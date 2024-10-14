@@ -14,6 +14,7 @@
         type="search"
         id="searchInput"
         [(ngModel)]="searchTerm"
+        (ngModelChange)="applyFiltersAndPagination()"
         name="searchTerm"
         placeholder="Search users..."
         class="w-full bg-transparent border-none outline-none text-sm"
@@ -101,7 +102,7 @@
             <th class="px-6 py-3 cursor-pointer" (click)="sortUsers('Name (A-Z)')">Name</th>
             <th class="px-6 py-3 cursor-pointer" (click)="sortUsers('Email (A-Z)')">Email</th>
             <th class="px-6 py-3">Phone</th>
-            <th class="px-6 py-3 cursor-pointer" (click)="sortUsers('Join Date (Newest)')">
+            <th class="px-6 py-3 cursor-pointer" (click)="sortUsers('Registration Date (Newest)')">
               Registration Date
             </th>
             <th class="px-6 py-3">Role</th>
@@ -116,7 +117,7 @@
             <td class="px-6 py-4 whitespace-nowrap">{{ user.name }}</td>
             <td class="px-6 py-4 whitespace-nowrap">{{ user.email }}</td>
             <td class="px-6 py-4 whitespace-nowrap">{{ user.phone }}</td>
-            <td class="px-6 py-4 whitespace-nowrap">{{ user.joinDate }}</td>
+            <td class="px-6 py-4 whitespace-nowrap">{{ user.registration_date }}</td>
             <td class="px-6 py-4 whitespace-nowrap">
               <span
                 [ngClass]="{
@@ -161,7 +162,7 @@
           <select
             id="itemsPerPage"
             [ngModel]="itemsPerPage"
-            (change)="onItemsPerPageChange($event)"
+            (ngModelChange)="onItemsPerPageChange($event)"
             class="px-2 py-0.5 bg-neutral-100 rounded border border-gray-300"
             aria-label="Select items per page"
           >
@@ -198,11 +199,11 @@
   </div>
 </div>
 
-<!-- Add/Edit User Modal -->
+<!-- Add/Edit User Modal
 <app-add-user-modal
   *ngIf="showModal"
   [user]="selectedUser"
   (userAdded)="handleUserAdded($event)"
   (userUpdated)="handleUserUpdated($event)"
   (modalClosed)="closeModal()"
-></app-add-user-modal>
+></app-add-user-modal> -->
